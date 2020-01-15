@@ -1,1 +1,1 @@
-# Pipelines for SMARTSeq and ATACSeq data analyses.
+# Pipelines for RNAseq and ATACseq data analyses.
