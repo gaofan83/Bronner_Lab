@@ -1,0 +1,14 @@
+while read line;
+do
+/home/fgao/software/STAR-2.7.0e/source/STAR --runThreadN 64 \
+--genomeDir ../star_index_galgal6 \
+--readFilesIn ${line}_combined_filtered.fastq.gz \
+--readFilesCommand zcat \
+--outFileNamePrefix $line \
+--outSAMstrandField intronMotif \
+--outFilterIntronMotifs RemoveNoncanonical \
+--outFilterType BySJout \
+--outSAMtype BAM SortedByCoordinate
+done < sample_ID.txt
+
+

@@ -1,0 +1,5 @@
+awk '{if($3~"gene") print $0}' /home/fgao/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf > gene_annotation.txt
+awk '{if($13~"gene_name") print $10"\t"$14}' gene_annotation.txt > gene_id_name.txt
+sed -i 's/"//g' gene_id_name.txt
+sed -i 's/;//g' gene_id_name.txt
+sort gene_id_name.txt | uniq > gene_id_name_uniq.txt

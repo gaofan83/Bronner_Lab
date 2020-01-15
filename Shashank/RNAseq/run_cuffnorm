@@ -1,0 +1,4 @@
+cuffnorm --use-sample-sheet -library-norm-method geometric -o cuffnorm_out -p 16 /home/fgao/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf sample_sheet.txt
+
+cuffnorm --use-sample-sheet -library-norm-method geometric -o cuffnorm_ext_out -p 16 /home/fgao/reference_genome/Gallus_gallus/Galgal6/Ggallus_97_extended_by_1kb.gtf sample_sheet_ext.txt
+

@@ -1,0 +1,34 @@
+while read line;
+do
+#zcat $line*R1_001.fastq.gz | gzip > $line.all.fastq.gz
+/home/fgao/software/STAR-2.7.0e/source/STAR --runThreadN 64 \
+--genomeDir star_index_galgal6 \
+--readFilesIn $line.all.fastq.gz \
+--readFilesCommand zcat \
+--outFileNamePrefix $line \
+--outSAMstrandField intronMotif \
+--outFilterIntronMotifs RemoveNoncanonical \
+--outFilterType BySJout \
+--outSAMtype BAM SortedByCoordinate
+done < sample_ID.txt
+
+
+while read line;
+do
+/home/fgao/software/STAR-2.7.0e/source/STAR --runThreadN 64 \
+--genomeDir star_index_galgal6_ext_1kb \
+--readFilesIn $line.all.fastq.gz \
+--readFilesCommand zcat \
+--outFileNamePrefix $line.ext \
+--outSAMstrandField intronMotif \
+--outFilterIntronMotifs RemoveNoncanonical \
+--outFilterType BySJout \
+--outSAMtype BAM SortedByCoordinate
+done < sample_ID.txt
+
+rm -rf seq_depth.txt
+while read line;
+do
+zcat $line.all.fastq.gz | wc -l | awk '{print $1/4}' >> seq_depth.txt
+done < sample_ID.txt
+paste sample_ID.txt seq_depth.txt > seq_depth_ID.txt

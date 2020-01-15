@@ -1,0 +1,14 @@
+#while read line;
+#do
+#ext="Aligned.sortedByCoord.out.bam"
+#file=$line$ext
+#cuffquant -o ./cuffquant_$line -p 64 --library-type fr-unstranded /home/fgao/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf $file
+#done < sample_ID.txt
+
+while read line;
+do
+ext=".extAligned.sortedByCoord.out.bam"
+file=$line$ext
+cuffquant -o ./cuffquant_ext_$line -p 64 --library-type fr-unstranded /home/fgao/reference_genome/Gallus_gallus/Galgal6/Ggallus_97_extended_by_1kb.gtf $file
+done < sample_ID.txt
+
