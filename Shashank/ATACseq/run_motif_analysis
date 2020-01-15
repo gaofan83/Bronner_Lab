@@ -1,0 +1,25 @@
+#Extend ATAC-seq MCC and PCC speicific regions to 500bp from the center of the peaks.
+awk '{print $1"\t"int(($2+$3)/2)}' ATAC_all_sel_mig.bed > ATAC_all_sel_mig_center.txt
+awk '{print $1"\t"$2-500"\t"$2+500}' ATAC_all_sel_mig_center.txt > ATAC_all_sel_mig_500bp_ext.bed
+
+awk '{print $1"\t"int(($2+$3)/2)}' ATAC_all_sel_prem.bed > ATAC_all_sel_prem_center.txt
+awk '{print $1"\t"$2-500"\t"$2+500}' ATAC_all_sel_prem_center.txt > ATAC_all_sel_prem_500bp_ext.bed
+
+#Rscript
+mcc<-read.table("MCC_TFs_that_are_not_mito_or_ribo.txt", header=T, row.names=1)
+jaspar<-read.table("/home/fgao/tools/JASPAR2020_CORE_vertebrates_non-redundant_list.txt", header=F)
+jaspar$name<-toupper(jaspar$V3)
+mcc_jaspar<-jaspar[grepl(paste(mcc$x, collapse="|"), jaspar$name),]
+write.table(mcc_jaspar, file="MCC_TF_jaspar.txt", quote=F, row.names=F, col.names=F)
+
+#Shashank manually filtered motif list and generated MCC_TF_jaspar_filtered.txt
+#bash script 
+awk '{print $2}' MCC_TF_jaspar_filtered.txt > MCC_TF_jaspar_ID.txt
+
+rm -f MCC_TF_jaspar_motif.meme
+while read line;
+do
+cat ~/tools/JASPAR2020_CORE_vertebrates_non-redundant/${line}.meme >> MCC_TF_jaspar_motif.meme
+done < MCC_TF_jaspar_ID.txt
+
+/home/fgao/software/meme-5.0.5/bin/fimo --o fimo_MCC_500bp_ext MCC_TF_jaspar_motif.meme ATAC_all_sel_mig_500bp_ext.fa

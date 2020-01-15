@@ -1,0 +1,97 @@
+#1. Merge individual sample lane data to individual biological sample
+samtools merge -O BAM mig-1_all.bam mig-1_S13*sort.bam 
+samtools merge -O BAM mig-2_all.bam mig-2_S9*sort.bam 
+samtools merge -O BAM mig-4_all.bam mig-4_S11*sort.bam 
+samtools merge -O BAM mig-6_all.bam mig-6_S8*sort.bam 
+samtools merge -O BAM mig-7_all.bam mig-7_S6*sort.bam 
+
+samtools merge -O BAM mig-neg-1_all.bam mig-neg-1_S12*sort.bam 
+samtools merge -O BAM mig-neg-6_all.bam mig-neg-6_S7*sort.bam 
+samtools merge -O BAM mig-neg-8_all.bam mig-neg-8_S5*sort.bam
+
+samtools merge -O BAM prem-1_all.bam prem-1_S4*sort.bam 
+samtools merge -O BAM prem-2_all.bam prem-2_S14*sort.bam 
+samtools merge -O BAM prem-3_all.bam prem-3_S2*sort.bam 
+
+samtools merge -O BAM prem-neg-1_all.bam prem-neg-1_S3*sort.bam 
+samtools merge -O BAM prem-neg-2_all.bam prem-neg-2_S10*sort.bam 
+samtools merge -O BAM prem-neg-3_all.bam prem-neg-3_S1*sort.bam 
+
+#2. Remove PCR replicates and get uniquely mapped reads (remove multi-mapped reads) for each biological sample, index bam files and generate bigwig traces
+while read line;
+do
+samtools rmdup ${line}_all.bam ${line}_rmdup.bam
+samtools view -hf 0x2 ${line}_rmdup.bam | grep -v "XS:i:" | samtools view -bS > ${line}_uniq.bam
+samtools index ${line}_uniq.bam
+bamCoverage -b ${line}_uniq.bam -o ${line}.bw  --binSize 10 --normalizeUsing RPKM -p 64
+done < sample_ID.txt
+
+while read line;
+do
+samtools index ${line}_rmdup.bam
+done < sample_ID.txt
+
+#3. Remove MT reads
+while read line;
+do
+samtools view -h ${line}_uniq.bam | awk '{if($3 != "MT"){print $0}}' | samtools view -Sb - > ${line}_uniq_noMT.bam
+samtools index ${line}_uniq_noMT.bam
+done < sample_ID.txt
+
+#4. Merge biological replicate bam to different biological conditions and generate bam index
+samtools merge -O BAM mig_combined_noMT.bam mig-2_uniq_noMT.bam mig-4_uniq_noMT.bam mig-6_uniq_noMT.bam 
+samtools merge -O BAM mig-neg_combined_noMT.bam mig-neg-1_uniq_noMT.bam mig-neg-6_uniq_noMT.bam mig-neg-8_uniq_noMT.bam 
+samtools merge -O BAM prem_combined_noMT.bam prem-1_uniq_noMT.bam prem-2_uniq_noMT.bam prem-3_uniq_noMT.bam 
+samtools merge -O BAM prem-neg_combined_noMT.bam prem-neg-1_uniq_noMT.bam prem-neg-2_uniq_noMT.bam prem-neg-3_uniq_noMT.bam 
+samtools index mig_combined_noMT.bam 
+samtools index mig-neg_combined_noMT.bam 
+samtools index prem_combined_noMT.bam 
+samtools index prem-neg_combined_noMT.bam 
+
+#5. Generate bigwig traces for different biological conditions
+bamCoverage -b mig_combined_noMT.bam -o mig_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b mig-neg_combined_noMT.bam -o mig-neg_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b prem_combined_noMT.bam -o prem_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b prem-neg_combined_noMT.bam -o prem-neg_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+
+#6. Work on some publicly available data, Remove PCR replicates and get uniquely mapped reads (remove multi-mapped reads) for each biological sample, index bam files and generate bigwig traces
+
+while read line;
+do
+samtools rmdup ${line}.sort.bam ${line}_rmdup.bam
+samtools view -hf 0x2 ${line}_rmdup.bam | grep -v "XS:i:" | samtools view -bS > ${line}_uniq.bam
+samtools index ${line}_uniq.bam
+bamCoverage -b ${line}_uniq.bam -o ${line}.bw  --binSize 10 --normalizeUsing RPKM -p 64
+done < sample_ID2.txt
+
+while read line;
+do
+samtools index ${line}_rmdup.bam
+done < sample_ID2.txt
+
+#7. Remove MT reads
+while read line;
+do
+samtools view -h ${line}_uniq.bam | awk '{if($3 != "MT"){print $0}}' | samtools view -Sb - > ${line}_uniq_noMT.bam
+samtools index ${line}_uniq_noMT.bam
+done < sample_ID2.txt
+
+#8. Merge biological replicate bam to different biological conditions and generate bam index
+samtools merge -O BAM 5-6ss-neg_combined_noMT.bam 5-6ss_negative_rep1_uniq_noMT.bam 5-6ss_negative_rep2_uniq_noMT.bam 5-6ss_negative_rep3_uniq_noMT.bam 5-6ss_negative_rep4_uniq_noMT.bam
+samtools merge -O BAM 5-6ss-pos_combined_noMT.bam 5-6ss_positive_rep1_uniq_noMT.bam 5-6ss_positive_rep2_uniq_noMT.bam 5-6ss_positive_rep3_uniq_noMT.bam
+samtools merge -O BAM 8-10ss_neg_combined_noMT.bam 8-10ss_negative_rep1_uniq_noMT.bam 8-10ss_negative_rep2_uniq_noMT.bam 8-10ss_negative_rep3_uniq_noMT.bam 8-10ss_negative_rep4_uniq_noMT.bam
+samtools merge -O BAM 8-10ss_pos_combined_noMT.bam 8-10ss_positive_rep1_uniq_noMT.bam 8-10ss_positive_rep2_uniq_noMT.bam 8-10ss_positive_rep3_uniq_noMT.bam
+samtools merge -O BAM epiblast_combined_noMT.bam epiblast_rep1_uniq_noMT.bam epiblast_rep2_uniq_noMT.bam
+samtools index 5-6ss-neg_combined_noMT.bam
+samtools index 5-6ss-pos_combined_noMT.bam
+samtools index 8-10ss_neg_combined_noMT.bam
+samtools index 8-10ss_pos_combined_noMT.bam
+samtools index epiblast_combined_noMT.bam
+
+#9. Generate bigwig traces for different biological conditions
+bamCoverage -b 5-6ss-neg_combined_noMT.bam -o 5-6ss-neg_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b 5-6ss-pos_combined_noMT.bam -o 5-6ss-pos_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b 8-10ss_neg_combined_noMT.bam -o 8-10ss_neg_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b 8-10ss_pos_combined_noMT.bam -o 8-10ss_pos_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+bamCoverage -b epiblast_combined_noMT.bam -o epiblast_combined_noMT.bw --binSize 10 --normalizeUsing RPKM -p 16 &
+

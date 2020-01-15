@@ -1,0 +1,14 @@
+#~/tools/faCount /home/fgao/reference_genome/Gallus_gallus/GRCg6a_ensembl_release96/Gallus_gallus.GRCg6a.dna_rm.toplevel.fa.gz
+#effect size (nonN base)=1795024734
+
+while read line;
+do
+#macs2 callpeak --verbose 3 --treatment $line.bam --name $line -g 1795024734 --bdg -q 0.001 -f BAMPE --nomodel --shift -100 --extsize 200 --broad --keep-dup all 
+macs2 callpeak --verbose 3 --treatment $line.bam --name $line -g 1795024734 --bdg -q 0.0001 -f BAMPE --nomodel --shift -100 --extsize 200 --keep-dup all
+done < sample_ID.txt
+
+cat 5-6ss-pos_combined_noMT_peaks.narrowPeak 8-10ss_pos_combined_noMT_peaks.narrowPeak epiblast_combined_noMT_peaks.narrowPeak \
+        5-6ss-neg_combined_noMT_peaks.narrowPeak 8-10ss_neg_combined_noMT_peaks.narrowPeak \
+        mig-neg_combined_noMT_peaks.narrowPeak prem-neg_combined_noMT_peaks.narrowPeak \
+        mig_combined_noMT_peaks.narrowPeak prem_combined_noMT_peaks.narrowPeak | sortBed -i - | mergeBed -i - > ATAC_all.bed
+

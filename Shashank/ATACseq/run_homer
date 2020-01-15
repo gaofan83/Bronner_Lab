@@ -1,0 +1,26 @@
+annotatePeaks.pl ATAC_all_sel_mig.bed ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa \
+        -gff ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf >  ATAC_all_sel_mig_homer.txt
+
+annotatePeaks.pl ATAC_all_sel_prem.bed ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa \
+        -gff ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf >  ATAC_all_sel_prem_homer.txt
+
+annotatePeaks.pl ATAC_all_group1.bed ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa \
+        -gff ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf >  ATAC_all_group1_homer.txt
+
+annotatePeaks.pl ATAC_all_group2.bed ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa \
+        -gff ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf >  ATAC_all_group2_homer.txt
+
+annotatePeaks.pl ATAC_all_group3.bed ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa \
+        -gff ~/reference_genome/Gallus_gallus/Galgal6/Gallus_gallus.GRCg6a.95.gtf >  ATAC_all_group3_homer.txt
+
+
+while read line;
+do
+awk -F'\t' '{print $11}' ${line}_homer.txt > ${line}_genes.txt
+sed -i -e 's/;/\t/g' ${line}_genes.txt
+awk -F'\t' '{if($_~"gene_name") print $6}' ${line}_genes.txt > ${line}_gene_names.txt
+sed -i -e 's/gene_name//g' ${line}_gene_names.txt
+sed -i -e 's/"//g' ${line}_gene_names.txt
+sed -i -e 's/ //g' ${line}_gene_names.txt
+sort ${line}_gene_names.txt | uniq > ${line}_gene_names_uniq.txt
+done < homer_ID.txt

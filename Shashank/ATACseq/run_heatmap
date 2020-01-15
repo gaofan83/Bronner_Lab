@@ -1,0 +1,94 @@
+computeMatrix reference-point --referencePoint center -S \
+               ../alignment/mig_combined.bw \
+               ../alignment/mig-neg_combined.bw \
+               ../alignment/prem_combined.bw \
+               ../alignment/prem-neg_combined.bw \
+               ../alignment/5-6ss-pos_combined.bw \
+               ../alignment/5-6ss-neg_combined.bw \
+               ../alignment/8-10ss_pos_combined.bw \
+               ../alignment/8-10ss_neg_combined.bw \
+               ../alignment/epiblast_combined.bw \
+               -p 48 \
+               -R ATAC_all_sel.bed \
+               -b 3000 \
+               -a 3000 \
+	       --missingDataAsZero \
+               -o matrix.ATAC_all_sel.gz
+plotHeatmap -m matrix.ATAC_all_sel.gz \
+      -out Heatmap_ATAC_all_sel.png \
+      --colorMap Reds_r \
+      --whatToShow 'heatmap and colorbar' \
+      --sortRegions no \
+      -x "Distance (bp)" \
+      --refPointLabel "Peak Center"
+
+cat venn_result_pos*bed > venn_pos_sig.bed
+computeMatrix reference-point --referencePoint center -S \
+               ../alignment/mig_combined.bw \
+               ../alignment/prem_combined.bw \
+               ../alignment/5-6ss-pos_combined.bw \
+               ../alignment/8-10ss_pos_combined.bw \
+               ../alignment/epiblast_combined.bw \
+               -p 48 \
+               -R venn_pos_sig.bed \
+               -b 3000 \
+               -a 3000 \
+               --missingDataAsZero \
+               -o matrix.venn_pos_sig.gz
+plotHeatmap -m matrix.venn_pos_sig.gz \
+      -out Heatmap_venn_pos_sig.png \
+      --colorMap Reds_r \
+      --whatToShow 'heatmap and colorbar' \
+      --sortRegions no \
+      -x "Distance (bp)" \
+      --refPointLabel "Peak Center" 
+
+
+computeMatrix reference-point --referencePoint center -S \
+               ../alignment/mig_combined.bw \
+               ../alignment/mig-neg_combined.bw \
+               ../alignment/prem_combined.bw \
+               ../alignment/prem-neg_combined.bw \
+               ../alignment/5-6ss-pos_combined.bw \
+               ../alignment/5-6ss-neg_combined.bw \
+               ../alignment/8-10ss_pos_combined.bw \
+               ../alignment/8-10ss_neg_combined.bw \
+               ../alignment/epiblast_combined.bw \
+               -p 48 \
+               -R ATAC_all_sel_prem.bed ATAC_all_sel_mig.bed ATAC_all_sel_epiblast.bed ATAC_all_sel_5-6ss.bed ATAC_all_sel_8-10ss.bed \
+               -b 3000 \
+               -a 3000 \
+               --missingDataAsZero \
+               -o matrix.ATAC_all_pos1.gz
+plotHeatmap -m matrix.ATAC_all_pos1.gz \
+      -out Heatmap_ATAC_all_pos1.png \
+      --colorMap Reds_r \
+      --whatToShow 'heatmap and colorbar' \
+      --sortRegions no \
+      -x "Distance (bp)" \
+      --refPointLabel "Peak Center"
+
+computeMatrix reference-point --referencePoint center -S \
+               ../alignment/mig_combined.bw \
+               ../alignment/mig-neg_combined.bw \
+               ../alignment/prem_combined.bw \
+               ../alignment/prem-neg_combined.bw \
+               ../alignment/5-6ss-pos_combined.bw \
+               ../alignment/5-6ss-neg_combined.bw \
+               ../alignment/8-10ss_pos_combined.bw \
+               ../alignment/8-10ss_neg_combined.bw \
+               ../alignment/epiblast_combined.bw \
+               -p 48 \
+               -R ATAC_all_group1.bed ATAC_all_group2.bed ATAC_all_group3.bed \
+               -b 3000 \
+               -a 3000 \
+               --missingDataAsZero \
+               -o matrix.ATAC_all_pos2.gz
+plotHeatmap -m matrix.ATAC_all_pos2.gz \
+      -out Heatmap_ATAC_all_pos2.png \
+      --colorMap Reds_r \
+      --whatToShow 'heatmap and colorbar' \
+      --sortRegions no \
+      -x "Distance (bp)" \
+      --refPointLabel "Peak Center"
+

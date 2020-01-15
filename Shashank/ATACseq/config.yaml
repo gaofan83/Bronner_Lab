@@ -1,0 +1,4 @@
+#bowtie index directory
+BOWTIEINDEX: /home/fgao/reference_genome/Gallus_gallus/GRCg6a_ensembl_release96/
+THREAD: 8
+TRIM: 40
