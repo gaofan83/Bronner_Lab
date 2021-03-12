@@ -5,4 +5,4 @@ rgt-hint footprinting --atac-seq --paired-end --output-prefix=prem-neg_combined 
 
 rgt-motifanalysis matching --organism=GRCg6a --output-location=./motifMatch --input-files ./mig_combined.bed ./mig-neg_combined.bed ./prem_combined.bed ./prem-neg_combined.bed
 rgt-hint differential --organism=GRCg6a --bc --nc 30 --mpbs-files=./motifMatch/mig_combined_mpbs.bed,./motifMatch/mig-neg_combined_mpbs.bed,./motifMatch/prem_combined_mpbs.bed,./motifMatch/prem-neg_combined_mpbs.bed \
-        --reads-files=mig_combined_noMT.bam,mig-neg_combined_noMT.bam,prem_combined.bam,prem-neg_combined.bam --conditions=mig,mig-neg,prem,prem-neg --output-location=footprints
+        --reads-files=mig_combined_noMT.bam,mig-neg_combined_noMT.bam,prem_combined_noMT.bam,prem-neg_combined_noMT.bam --conditions=mig,mig-neg,prem,prem-neg --output-location=footprints
