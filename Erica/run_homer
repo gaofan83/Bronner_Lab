@@ -1,0 +1,41 @@
+while read line;
+do
+bamToBed -i ${line}.bam > ${line}.bed
+makeTagDirectory ${line} -genome ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa ${line}.bed -format bed
+done < sample_ID.txt
+
+while read line;
+do
+makeUCSCfile ${line} -o auto -bigWig ~/reference_genome/Galgal6/galgal6_chrome_sizes -fsize 1e20
+done < sample_ID.txt
+
+findPeaks 23518_Premig_Ctrl-rep1_IP -i 23517_Premig_Ctrl-rep1_Input -o HOMER_Premig_Ctrl-rep1.txt
+findPeaks 23520_Premig_Elavl1-rep1_IP -i 23519_Premig_Elavl1-rep1_Input -o HOMER_Premig_Elavl1-rep1.txt
+findPeaks 23522_Premig_Ctrl-rep2_IP -i 23521_Premig_Ctrl-rep2_Input -o HOMER_Premig_Ctrl-rep2.txt
+findPeaks 23524_Premig_Elavl1-rep2_IP -i 23523_Premig_Elavl1-rep2_Input -o HOMER_Premig_Elavl1-rep2.txt
+
+#findPeaks 23518_Premig_Ctrl-rep1_IP 23522_Premig_Ctrl-rep2_IP -i 23517_Premig_Ctrl-rep1_Input 23521_Premig_Ctrl-rep2_Input -o Premig_Ctrl_homer.txt
+#findPeaks 23520_Premig_Elavl1-rep1_IP 23524_Premig_Elavl1-rep2_IP -i 23519_Premig_Elavl1-rep1_Input 23523_Premig_Elavl1-rep2_Input -o Premig_Elavl1_homer.txt
+
+
+annotatePeaks.pl HOMER_Premig_Ctrl-rep1.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+	~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > HOMER_annotate_Premig_Ctrl-rep1.txt
+annotatePeaks.pl HOMER_Premig_Elavl1-rep1.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+	~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > HOMER_annotate_Premig_Elavl1-rep1.txt
+annotatePeaks.pl HOMER_Premig_Ctrl-rep2.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > HOMER_annotate_Premig_Ctrl-rep2.txt
+annotatePeaks.pl HOMER_Premig_Elavl1-rep2.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > HOMER_annotate_Premig_Elavl1-rep2.txt
+
+
+# differential peak analysis
+mergePeaks HOMER_Premig_Ctrl-rep1.txt HOMER_Premig_Elavl1-rep1.txt > HOMER_Premig-rep1.txt
+mergePeaks HOMER_Premig_Ctrl-rep2.txt HOMER_Premig_Elavl1-rep2.txt > HOMER_Premig-rep2.txt
+
+getDifferentialPeaks HOMER_Premig-rep1.txt 23520_Premig_Elavl1-rep1_IP 23518_Premig_Ctrl-rep1_IP > diff_HOMER_Premig_Elavl1_vs_Ctrl-rep1.txt
+getDifferentialPeaks HOMER_Premig-rep2.txt 23524_Premig_Elavl1-rep2_IP 23522_Premig_Ctrl-rep2_IP > diff_HOMER_Premig_Elavl1_vs_Ctrl-rep2.txt
+annotatePeaks.pl diff_HOMER_Premig_Elavl1_vs_Ctrl-rep1.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > diff_HOMER_annotate_Premig_Elavl1_vs_Ctrl-rep1.txt
+annotatePeaks.pl diff_HOMER_Premig_Elavl1_vs_Ctrl-rep2.txt ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > diff_HOMER_annotate_Premig_Elavl1_vs_Ctrl-rep2.txt
+

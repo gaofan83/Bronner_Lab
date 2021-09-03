@@ -1,0 +1,42 @@
+#macs2 callpeak -t 23518_Premig_Ctrl-rep1_IP.bam 23522_Premig_Ctrl-rep2_IP.bam -c 23517_Premig_Ctrl-rep1_Input.bam 23521_Premig_Ctrl-rep2_Input.bam \
+#	 -f BAM -g 1795024734 -n Premig_Ctrl_macs2 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Ctrl.log
+#macs2 callpeak -t 23520_Premig_Elavl1-rep1_IP.bam 23524_Premig_Elavl1-rep2_IP.bam -c 23519_Premig_Elavl1-rep1_Input.bam 23523_Premig_Elavl1-rep2_Input.bam \
+#        -f BAM -g 1795024734 -n Premig_Elavl1_macs2 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Elavl1.log
+
+
+macs2 callpeak -t 23518_Premig_Ctrl-rep1_IP.bam -c 23517_Premig_Ctrl-rep1_Input.bam \
+        -f BAM -g 1795024734 -n MACS2_Premig_Ctrl-rep1 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Ctrl-rep1.log
+macs2 callpeak -t 23520_Premig_Elavl1-rep1_IP.bam -c 23519_Premig_Elavl1-rep1_Input.bam \
+        -f BAM -g 1795024734 -n MACS2_Premig_Elavl1-rep1 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Elavl1-rep1.log
+macs2 callpeak -t 23522_Premig_Ctrl-rep2_IP.bam -c 23521_Premig_Ctrl-rep2_Input.bam \
+        -f BAM -g 1795024734 -n MACS2_Premig_Ctrl-rep2 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Ctrl-rep2.log
+macs2 callpeak -t 23524_Premig_Elavl1-rep2_IP.bam -c 23523_Premig_Elavl1-rep2_Input.bam \
+        -f BAM -g 1795024734 -n MACS2_Premig_Elavl1-rep2 -B -q 0.00001 --nomodel --nolambda --extsize 200 > Premig_Elavl1-rep2.log
+
+
+annotatePeaks.pl MACS2_Premig_Ctrl-rep1_peaks.narrowPeak ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > MACS2_annotate_Premig_Ctrl-rep1.txt
+annotatePeaks.pl MACS2_Premig_Elavl1-rep1_peaks.narrowPeak ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > MACS2_annotate_Premig_Elavl1-rep1.txt
+annotatePeaks.pl MACS2_Premig_Ctrl-rep2_peaks.narrowPeak ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > MACS2_annotate_Premig_Ctrl-rep2.txt
+annotatePeaks.pl MACS2_Premig_Elavl1-rep2_peaks.narrowPeak ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > MACS2_annotate_Premig_Elavl1-rep2.txt
+
+
+#egrep "tags after filtering in treatment|tags after filtering in control" *peaks.xls
+#collect the number for control, use below as depth value
+
+macs2 bdgdiff --t1 MACS2_Premig_Ctrl-rep1_treat_pileup.bdg --c1 MACS2_Premig_Ctrl-rep1_control_lambda.bdg \
+	--t2 MACS2_Premig_Elavl1-rep1_treat_pileup.bdg --c2 MACS2_Premig_Elavl1-rep1_control_lambda.bdg \
+	--d1 9769757 --d2 9920190 -g 60 -l 120 --o-prefix diff_MACS2_Premig_Ctrl_vs_Premig_Elavl1_rep1
+macs2 bdgdiff --t1 MACS2_Premig_Ctrl-rep2_treat_pileup.bdg --c1 MACS2_Premig_Ctrl-rep2_control_lambda.bdg \
+        --t2 MACS2_Premig_Elavl1-rep2_treat_pileup.bdg --c2 MACS2_Premig_Elavl1-rep2_control_lambda.bdg \
+        --d1 10918930 --d2 10972373 -g 60 -l 120 --o-prefix diff_MACS2_Premig_Ctrl_vs_Premig_Elavl1_rep2
+
+
+annotatePeaks.pl diff_MACS2_Premig_Ctrl_vs_Premig_Elavl1_rep1_c3.0_cond2.bed ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > diff_MACS2_annotate_Premig_Ctrl_vs_Premig_Elavl1_rep1_c3.0_cond2.txt
+annotatePeaks.pl diff_MACS2_Premig_Ctrl_vs_Premig_Elavl1_rep2_c3.0_cond2.bed ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.dna.toplevel.fa -gtf \
+        ~/reference_genome/Galgal6/Gallus_gallus.GRCg6a.95.gtf > diff_MACS2_annotate_Premig_Ctrl_vs_Premig_Elavl1_rep2_c3.0_cond2.txt
+

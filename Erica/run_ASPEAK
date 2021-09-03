@@ -1,0 +1,24 @@
+~/software/ASPeak/scripts/ASPeak.pl -lib 23518_Premig_Ctrl-rep1_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23517_Premig_Ctrl-rep1_Input.bam \
+	-outdir ASPeak_Premig_Ctrl-rep1
+
+~/software/ASPeak/scripts/ASPeak.pl -lib 23522_Premig_Ctrl-rep2_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23521_Premig_Ctrl-rep2_Input.bam \
+        -outdir ASPeak_Premig_Ctrl-rep2
+
+~/software/ASPeak/scripts/ASPeak.pl -lib 23520_Premig_Elavl1-rep1_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23519_Premig_Elavl1-rep1_Input.bam \
+        -outdir ASPeak_Premig_Elavl1-rep1
+
+~/software/ASPeak/scripts/ASPeak.pl -lib 23524_Premig_Elavl1-rep2_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23523_Premig_Elavl1-rep2_Input.bam \
+        -outdir ASPeak_Premig_Elavl1-rep2
+
+~/software/ASPeak/scripts/ASPeak.pl -lib 23520_Premig_Elavl1-rep1_IP.bam -control 23518_Premig_Ctrl-rep1_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23517_Premig_Ctrl-rep1_Input.bam:23519_Premig_Elavl1-rep1_Input.bam \
+        -outdir ASPeak_Premig-rep1
+
+~/software/ASPeak/scripts/ASPeak.pl -lib 23524_Premig_Elavl1-rep2_IP.bam -control 23522_Premig_Ctrl-rep2_IP.bam \
+        -beddir ~/reference_genome/Galgal6/annotation -rnaseq 23521_Premig_Ctrl-rep2_Input.bam:23523_Premig_Elavl1-rep2_Input.bam \
+        -outdir ASPeak_Premig-rep2
+
